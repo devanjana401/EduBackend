@@ -5,7 +5,7 @@ from rest_framework import status
 from django.contrib.auth import authenticate
 
 from .models import VendorRequest, CustomUser, Vendor
-from .serializers import VendorRequestSerializer
+from .serializers import VendorRequestSerializer,UserSerializer,VendorSerializer
 
 
 # vendor request api
@@ -51,11 +51,12 @@ class ApproveVendorRequestAPI(APIView):
         vendor_request.save()
 
         # create user account
-        user = CustomUser.objects.create_user(
-            email=vendor_request.email,
-            password="1234",   # default password
-            role=2
-        )
+        if not CustomUser.objects.filter(email=vendor_request.email).exists():
+            user = CustomUser.objects.create_user(
+                email=vendor_request.email,
+                password="1234",   # default password
+                role=2
+            )
 
         # create vendor profile
         Vendor.objects.create(
@@ -116,3 +117,28 @@ class SignupAPI(APIView):
         )
 
         return Response({"message": "User created successfully"})
+    
+
+# for frontend admin dashboard
+
+# users API
+class UsersAPI(APIView):
+
+    def get(self, request):
+
+        users = CustomUser.objects.all()
+        serializer = UserSerializer(users, many=True)
+
+        return Response(serializer.data)
+    
+# Vendors API
+class VendorsAPI(APIView):
+
+    def get(self, request):
+
+        vendors = Vendor.objects.all()
+        serializer = VendorSerializer(vendors, many=True)
+
+        return Response(serializer.data)
+    
+# vendor request API - also done in first
