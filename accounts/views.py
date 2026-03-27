@@ -1,11 +1,24 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 
 from django.contrib.auth import authenticate
 
+from rest_framework_simplejwt.tokens import RefreshToken
+
 from .models import VendorRequest, CustomUser, Vendor
 from .serializers import VendorRequestSerializer,UserSerializer,VendorSerializer
+
+
+# function to generate JWT tokens
+def get_tokens_for_user(user):
+    refresh = RefreshToken.for_user(user)
+
+    return {
+        "refresh": str(refresh),
+        "access": str(refresh.access_token),
+    }
 
 
 # vendor request api
@@ -32,10 +45,16 @@ class VendorRequestAPI(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-# approve vendor request
+# approve vendor request(admin only)
 class ApproveVendorRequestAPI(APIView):
 
+    permission_classes = [IsAuthenticated]
+
     def post(self, request, pk):
+
+        # allow only admin
+        if request.user.role != 1:
+            return Response({"error": "Permission denied"}, status=403)
 
         try:
             vendor_request = VendorRequest.objects.get(id=pk)
@@ -50,13 +69,17 @@ class ApproveVendorRequestAPI(APIView):
         vendor_request.status = 'approved'
         vendor_request.save()
 
-        # create user account
+        # create user account if not exists
+        user = None
+
         if not CustomUser.objects.filter(email=vendor_request.email).exists():
             user = CustomUser.objects.create_user(
                 email=vendor_request.email,
-                password="1234",   # default password
+                password="1234",
                 role=2
             )
+        else:
+            user = CustomUser.objects.get(email=vendor_request.email)
 
         # create vendor profile
         Vendor.objects.create(
@@ -92,11 +115,17 @@ class LoginAPI(APIView):
                 status=status.HTTP_401_UNAUTHORIZED
             )
 
+        # generate JWT tokens
+        tokens = get_tokens_for_user(user)
+
         return Response({
             "message": "Login successful",
             "email": user.email,
-            "role": user.role
+            "role": user.role,
+            "access": tokens["access"],
+            "refresh": tokens["refresh"]
         })
+
 
 # signup API
 class SignupAPI(APIView):
@@ -117,9 +146,7 @@ class SignupAPI(APIView):
         )
 
         return Response({"message": "User created successfully"})
-    
 
-# for frontend admin dashboard
 
 # users API
 class UsersAPI(APIView):
@@ -130,7 +157,8 @@ class UsersAPI(APIView):
         serializer = UserSerializer(users, many=True)
 
         return Response(serializer.data)
-    
+
+
 # Vendors API
 class VendorsAPI(APIView):
 
@@ -140,5 +168,3 @@ class VendorsAPI(APIView):
         serializer = VendorSerializer(vendors, many=True)
 
         return Response(serializer.data)
-    
-# vendor request API - also done in first
