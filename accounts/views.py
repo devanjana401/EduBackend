@@ -52,9 +52,9 @@ class ApproveVendorRequestAPI(APIView):
 
     def post(self, request, pk):
 
-        # allow only admin
-        if request.user.role != 1:
-            return Response({"error": "Permission denied"}, status=403)
+        # # allow only admin
+        # if request.user.role != 1:
+        #     return Response({"error": "Permission denied"}, status=403)
 
         try:
             vendor_request = VendorRequest.objects.get(id=pk)
@@ -126,6 +126,20 @@ class LoginAPI(APIView):
             "refresh": tokens["refresh"]
         })
 
+# logout API        
+class LogoutAPI(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        try:
+            refresh_token = request.data.get("refresh")
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+
+            return Response({"message": "Logged out successfully"})
+
+        except Exception:
+            return Response({"error": "Invalid token"}, status=400)
 
 # signup API
 class SignupAPI(APIView):
@@ -150,6 +164,8 @@ class SignupAPI(APIView):
 
 # users API
 class UsersAPI(APIView):
+
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
 

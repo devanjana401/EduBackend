@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import VendorRequestAPI, ApproveVendorRequestAPI, LoginAPI,SignupAPI,UsersAPI,VendorsAPI
+from .views import VendorRequestAPI, ApproveVendorRequestAPI, LoginAPI,SignupAPI,UsersAPI,VendorsAPI,LogoutAPI
 
 urlpatterns = [
     # vendor request
@@ -8,6 +8,7 @@ urlpatterns = [
 
     # authentication
     path('login/', LoginAPI.as_view()),
+    path("logout/", LogoutAPI.as_view()),
     path("signup/", SignupAPI.as_view(), name="signup"),
 
     # admin dashboard APIs
