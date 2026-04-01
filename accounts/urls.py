@@ -1,17 +1,14 @@
 from django.urls import path
-from .views import VendorRequestAPI, ApproveVendorRequestAPI, LoginAPI,SignupAPI,UsersAPI,VendorsAPI,LogoutAPI
+from .views import VendorRequestAPI, LoginAPI,SignupAPI,LogoutAPI,ResetPasswordAPI
 
 urlpatterns = [
+    
     # vendor request
     path('vendor-request/', VendorRequestAPI.as_view()),
-    path('approve-vendor/<int:pk>/', ApproveVendorRequestAPI.as_view()),
 
     # authentication
     path('login/', LoginAPI.as_view()),
     path("logout/", LogoutAPI.as_view()),
     path("signup/", SignupAPI.as_view(), name="signup"),
-
-    # admin dashboard APIs
-    path("users/", UsersAPI.as_view()),
-    path("vendors/", VendorsAPI.as_view()),
+    path("reset-password/", ResetPasswordAPI.as_view(), name="reset-password"),
 ]
