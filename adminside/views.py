@@ -72,11 +72,24 @@ class BlockUserAPI(APIView):
     def post(self, request, pk):
         try:
             user = CustomUser.objects.get(id=pk)
+
+            # Prevent blocking admin
+            if user.is_staff:
+                return Response(
+                    {"error": "Admin users cannot be blocked"},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
             user.is_active = False
             user.save()
+
             return Response({"message": "User blocked successfully"})
+
         except CustomUser.DoesNotExist:
-            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {"error": "User not found"},
+                status=status.HTTP_404_NOT_FOUND
+            )
 
 
 class UnblockUserAPI(APIView):

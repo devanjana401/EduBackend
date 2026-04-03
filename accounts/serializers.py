@@ -10,7 +10,7 @@ class VendorRequestSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ['id', 'email', 'role']
+        fields = ['id', 'email', 'role','is_active']
 
 
 class VendorSerializer(serializers.ModelSerializer):
