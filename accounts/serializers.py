@@ -26,5 +26,6 @@ class VendorSerializer(serializers.ModelSerializer):
             'email',
             'experience_years',
             'specialization',
-            'is_verified'
+            'is_verified',
+            'bio'
         ]

@@ -4,7 +4,10 @@ from .views import (
     BlockUserAPI,
     UnblockUserAPI,
     UsersAPI,
-    VendorsAPI
+    VendorsAPI,
+    ProfileViewAPI,
+    ProfileUpdateAPI,
+    ProfileDeleteAPI
 )
 
 urlpatterns = [
@@ -13,4 +16,9 @@ urlpatterns = [
     path('unblock-user/<int:pk>/', UnblockUserAPI.as_view(), name='unblock-user'),
     path('users/', UsersAPI.as_view(), name='users-list'),
     path('vendors/', VendorsAPI.as_view(), name='vendors-list'),
+
+    
+    path("profile/<str:role>/<int:pk>/", ProfileViewAPI.as_view()),
+    path("profile-update/<str:role>/<int:pk>/", ProfileUpdateAPI.as_view()),
+    path("profile-delete/<str:role>/<int:pk>/", ProfileDeleteAPI.as_view()),
 ]

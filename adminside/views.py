@@ -1,8 +1,10 @@
 from django.shortcuts import render
+from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
+
 
 # Import models and serializers from account app
 from accounts.models import CustomUser, VendorRequest, Vendor
@@ -127,3 +129,71 @@ class VendorsAPI(APIView):
         serializer = VendorSerializer(vendors, many=True)
 
         return Response(serializer.data)
+
+
+# profile view
+class ProfileViewAPI(APIView):
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, role, pk):
+
+        if role == "user":
+            obj = CustomUser.objects.get(id=pk)
+            serializer = UserSerializer(obj)
+
+        elif role == "vendor":
+            obj = Vendor.objects.get(id=pk)
+            serializer = VendorSerializer(obj)
+
+        else:
+            return Response({"error": "Invalid role"}, status=400)
+
+        return Response(serializer.data)
+    
+
+# profile edit
+class ProfileUpdateAPI(APIView):
+
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request, role, pk):
+
+        if role == "user":
+            obj = get_object_or_404(CustomUser, id=pk)
+            serializer = UserSerializer(obj, data=request.data, partial=True)
+
+        elif role == "vendor":
+            obj = get_object_or_404(Vendor, id=pk)
+            serializer = VendorSerializer(obj, data=request.data, partial=True)
+
+        else:
+            return Response({"error": "Invalid role"}, status=400)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+
+        return Response(serializer.errors, status=400)
+    
+
+# profile delete
+class ProfileDeleteAPI(APIView):
+
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request, role, pk):
+
+        if role == "user":
+            obj = CustomUser.objects.get(id=pk)
+
+        elif role == "vendor":
+            obj = Vendor.objects.get(id=pk)
+
+        else:
+            return Response({"error": "Invalid role"}, status=400)
+
+        obj.delete()
+
+        return Response({"message": "Deleted successfully"})
+    
