@@ -5,9 +5,6 @@ from .views import (
     UnblockUserAPI,
     UsersAPI,
     VendorsAPI,
-    UserViewAPI,
-    UserUpdateAPI,
-    UserDeleteAPI,
     VendorViewAPI,
     VendorUpdateAPI,
     VendorDeleteAPI,
@@ -23,11 +20,6 @@ urlpatterns = [
     path('users/', UsersAPI.as_view(), name='users-list'),
     path('vendors/', VendorsAPI.as_view(), name='vendors-list'),
 
-    
-    # user actions
-    path('user/<int:pk>/', UserViewAPI.as_view(), name='user-view'),
-    path('user-update/<int:pk>/', UserUpdateAPI.as_view(), name='user-update'),
-    path('user-delete/<int:pk>/', UserDeleteAPI.as_view(), name='user-delete'),
 
     # vendor actions
     path('vendor/<int:pk>/', VendorViewAPI.as_view(), name='vendor-view'),

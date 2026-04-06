@@ -4,6 +4,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.parsers import MultiPartParser, FormParser
 
 # import models and serializers from account app
 from accounts.models import CustomUser, VendorRequest, Vendor
@@ -128,34 +129,6 @@ class VendorsAPI(APIView):
         return Response(serializer.data)
 
 
-# user actions api
-class UserViewAPI(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request, pk):
-        user = get_object_or_404(CustomUser, id=pk)
-        serializer = UserSerializer(user)
-        return Response(serializer.data)
-
-class UserUpdateAPI(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def put(self, request, pk):
-        user = get_object_or_404(CustomUser, id=pk)
-        serializer = UserSerializer(user, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=400)
-
-class UserDeleteAPI(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def delete(self, request, pk):
-        user = get_object_or_404(CustomUser, id=pk)
-        user.delete()
-        return Response({"message": "User deleted successfully"})
-
 
 # vendor actions api
 class VendorViewAPI(APIView):
@@ -163,27 +136,49 @@ class VendorViewAPI(APIView):
 
     def get(self, request, pk):
         vendor = get_object_or_404(Vendor, id=pk)
-        serializer = VendorSerializer(vendor)
+
+        serializer = VendorSerializer(
+            vendor,
+            context={"request": request}
+        )
+
         return Response(serializer.data)
+
 
 class VendorUpdateAPI(APIView):
     permission_classes = [IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser]
 
     def put(self, request, pk):
+
         vendor = get_object_or_404(Vendor, id=pk)
-        serializer = VendorSerializer(vendor, data=request.data, partial=True)
+
+        serializer = VendorSerializer(
+            vendor,
+            data=request.data,
+            partial=True,
+            context={"request": request}
+        )
+
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
+
         return Response(serializer.errors, status=400)
+
 
 class VendorDeleteAPI(APIView):
     permission_classes = [IsAuthenticated]
 
     def delete(self, request, pk):
+
         vendor = get_object_or_404(Vendor, id=pk)
+
         vendor.delete()
-        return Response({"message": "Vendor deleted successfully"})
+
+        return Response({
+            "message": "Vendor deleted successfully"
+        })
     
 
 # vendor-request actions api
