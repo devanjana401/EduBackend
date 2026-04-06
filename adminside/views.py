@@ -187,15 +187,6 @@ class VendorDeleteAPI(APIView):
     
 
 # vendor-request actions api
-# class VendorRequestListAPI(APIView):
-#     permission_classes = [IsAuthenticated]
-
-#     def get(self, request):
-#         """Get all vendor requests"""
-#         requests = VendorRequest.objects.all()
-#         serializer = VendorRequestSerializer(requests, many=True)
-#         return Response(serializer.data)
-
 class VendorRequestViewAPI(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -203,7 +194,7 @@ class VendorRequestViewAPI(APIView):
         """View a single vendor request"""
         try:
             request_obj = VendorRequest.objects.get(id=pk)
-            serializer = VendorRequestSerializer(request_obj)
+            serializer = VendorRequestSerializer(request_obj,context={"request":request})
             return Response(serializer.data)
         except VendorRequest.DoesNotExist:
             return Response({"error": "Request not found"}, status=404)
