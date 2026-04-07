@@ -9,6 +9,7 @@ from rest_framework.parsers import MultiPartParser, FormParser
 # import models and serializers from account app
 from accounts.models import CustomUser, VendorRequest, Vendor
 from accounts.serializers import UserSerializer, VendorSerializer,VendorRequestSerializer
+from vendorside.serializers import CategorySerializer
 
 
 # Create your views here.
@@ -252,3 +253,19 @@ class VendorRequestDeleteAPI(APIView):
             return Response({"message": "Vendor request deleted"})
         except VendorRequest.DoesNotExist:
             return Response({"error": "Request not found"}, status=404)
+        
+
+# for categories to upload video by vendor
+class CreateCategoryView(APIView):
+
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+
+        serializer = CategorySerializer(data=request.data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+
+        return Response(serializer.errors)

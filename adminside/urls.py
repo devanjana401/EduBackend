@@ -11,6 +11,7 @@ from .views import (
     VendorRequestViewAPI,
     VendorRequestUpdateAPI,
     VendorRequestDeleteAPI,
+    CreateCategoryView,
 )
 
 urlpatterns = [
@@ -30,4 +31,7 @@ urlpatterns = [
     path("vendor-request/<int:pk>/", VendorRequestViewAPI.as_view(), name="vendor-request-view"),
     path("vendor-request-update/<int:pk>/", VendorRequestUpdateAPI.as_view(), name="vendor-request-update"),
     path("vendor-request-delete/<int:pk>/", VendorRequestDeleteAPI.as_view(), name="vendor-request-delete"),
+
+    # category
+    path("create-category/", CreateCategoryView.as_view()),
 ]
