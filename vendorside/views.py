@@ -45,6 +45,16 @@ class UploadVideoView(APIView):
             return Response(serializer.data)
         return Response(serializer.errors, status=400)
 
+
+class VendorVideosView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        # Get all videos for courses of the logged-in vendor
+        videos = Video.objects.filter(course__vendor=request.user)
+        serializer = VideoSerializer(videos, many=True)
+        return Response(serializer.data)
+
 # ----------- Admin Side ---------------
 
 class CreateCategoryView(APIView):
