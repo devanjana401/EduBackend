@@ -11,5 +11,6 @@ urlpatterns = [
     path('vendorside/', include('vendorside.urls')),
 ]
 
+# for media passing from back to front
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
