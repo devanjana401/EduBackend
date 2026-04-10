@@ -49,10 +49,15 @@ class UploadVideoView(APIView):
 class VendorVideosView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def get(self, request):
-        # Get all videos for courses of the logged-in vendor
-        videos = Video.objects.filter(course__vendor=request.user)
+    def get(self, request, course_id):
+
+        videos = Video.objects.filter(
+            course__id=course_id,
+            course__vendor=request.user
+        )
+
         serializer = VideoSerializer(videos, many=True)
+
         return Response(serializer.data)
 
 # ----------- Admin Side ---------------

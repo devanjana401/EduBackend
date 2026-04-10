@@ -7,7 +7,7 @@ urlpatterns = [
     path("vendor-courses/", VendorCoursesView.as_view()),
     path("create-course/", CreateCourseView.as_view()),
     path("upload-video/", UploadVideoView.as_view()),
-    path("vendor-videos/", VendorVideosView.as_view()),
+    path("vendor-videos/<int:course_id>/", VendorVideosView.as_view()),
 
     # Admin
     path("create-category/", CreateCategoryView.as_view()),
