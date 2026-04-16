@@ -7,7 +7,7 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 class CourseSerializer(serializers.ModelSerializer):
-    # Accept category as ID
+    # accept category as ID
     category = serializers.PrimaryKeyRelatedField(queryset=Category.objects.all())
     vendor = serializers.PrimaryKeyRelatedField(read_only=True)
 

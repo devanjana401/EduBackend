@@ -5,7 +5,7 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from .models import Category, Course, Video
 from .serializers import CategorySerializer, CourseSerializer, VideoSerializer
 
-# ----------- Vendor Side ---------------
+# ----------- vendor side ---------------
 
 class CategoryListView(APIView):
     def get(self, request):
@@ -60,7 +60,7 @@ class VendorVideosView(APIView):
 
         return Response(serializer.data)
 
-# ----------- Admin Side ---------------
+# ----------- admin side ---------------
 
 class CreateCategoryView(APIView):
     permission_classes = [IsAuthenticated]
@@ -92,7 +92,7 @@ class ApproveCourseView(APIView):
         return Response({"message": "Course approved"})
 
 
-# ----------- Public Side for Students ---------------
+# ----------- public side for students ---------------
 
 class PublicCoursesView(APIView):
     def get(self, request):
