@@ -152,7 +152,7 @@ class ApprovedCoursesView(APIView):
         return Response(serializer.data)
 
 
-# ----------- course actions ---------------
+# ----------- course actions for admin ---------------
 
 class CourseDetailView(RetrieveAPIView):
     queryset = Course.objects.all()
@@ -166,6 +166,53 @@ class UpdateCourseView(UpdateAPIView):
 
 class DeleteCourseView(DestroyAPIView):
     queryset = Course.objects.all()
+
+
+# ----------- course actions for vendor ---------------
+
+class VendorCourseDetailView(RetrieveAPIView):
+    serializer_class = CourseSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Course.objects.filter(vendor=self.request.user)
+
+
+class VendorUpdateCourseView(UpdateAPIView):
+    serializer_class = CourseSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Course.objects.filter(vendor=self.request.user)
+
+
+class VendorDeleteCourseView(DestroyAPIView):
+    serializer_class = CourseSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Course.objects.filter(vendor=self.request.user)
+
+
+# --------------------view video---------------------
+class VideoDetailView(RetrieveAPIView):
+    queryset = Video.objects.all()
+    serializer_class = VideoSerializer
+    permission_classes = [IsAuthenticated]
+
+
+# edit video
+class UpdateVideoView(UpdateAPIView):
+    queryset = Video.objects.all()
+    serializer_class = VideoSerializer
+    permission_classes = [IsAuthenticated]
+
+
+# delete video
+class DeleteVideoView(DestroyAPIView):
+    queryset = Video.objects.all()
+    serializer_class = VideoSerializer
+    permission_classes = [IsAuthenticated]
 
 
 # ----------- public side (students) ---------------
