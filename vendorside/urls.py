@@ -9,10 +9,18 @@ urlpatterns = [
     path("upload-video/", UploadVideoView.as_view()),
     path("vendor-videos/<int:course_id>/", VendorVideosView.as_view()),
 
+
+    path('course/request/<int:pk>/', RequestCourseApprovalView.as_view()),
+
     # admin
     path("create-category/", CreateCategoryView.as_view()),
     path("pending-courses/", PendingCoursesView.as_view()),
     path("approve-course/<int:pk>/", ApproveCourseView.as_view()),
+
+    path("approved-courses/", ApprovedCoursesView.as_view()),
+    path("course/<int:pk>/", CourseDetailView.as_view()),
+    path("course/update/<int:pk>/", UpdateCourseView.as_view()),
+    path("course/delete/<int:pk>/", DeleteCourseView.as_view()),
 
     # public
     path("public-courses/", PublicCoursesView.as_view()),

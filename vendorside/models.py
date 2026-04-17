@@ -26,8 +26,12 @@ class Course(models.Model):
     about = models.TextField()
     price = models.DecimalField(max_digits=10, decimal_places=2)
     coverphoto = models.ImageField(upload_to="coursecover", blank=True)
+
+    # control flags
     publishvendor = models.BooleanField(default=False)
     publishadmin = models.BooleanField(default=False)
+    is_requested = models.BooleanField(default=False)  
+
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

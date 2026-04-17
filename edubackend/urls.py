@@ -9,6 +9,7 @@ urlpatterns = [
     path('account/', include('accounts.urls')),  
     path('adminside/', include('adminside.urls')),
     path('vendorside/', include('vendorside.urls')),
+    path('userside/', include('userside.urls')),
 ]
 
 # for media passing from back to front

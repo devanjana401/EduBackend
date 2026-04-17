@@ -1,0 +1,51 @@
+from django.shortcuts import render
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from vendorside.models import Course, Video
+from .models import Purchase
+
+# Create your views here.
+
+class BuyCourseView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, course_id):
+        user = request.user
+
+        if Purchase.objects.filter(user=user, course_id=course_id).exists():
+            return Response({"message": "Already purchased"})
+
+        Purchase.objects.create(user=user, course_id=course_id, is_paid=True)
+
+        return Response({"message": "Course purchased successfully"})
+    
+class MyCoursesView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        purchases = Purchase.objects.filter(user=request.user, is_paid=True)
+        courses = [p.course for p in purchases]
+
+        from vendorside.serializers import CourseSerializer
+        serializer = CourseSerializer(courses, many=True)
+
+        return Response(serializer.data)
+    
+class CourseVideosView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, course_id):
+
+        user = request.user
+
+        if not Purchase.objects.filter(user=user, course_id=course_id, is_paid=True).exists():
+            return Response({"error": "You need to purchase this course"}, status=403)
+
+        videos = Video.objects.filter(course_id=course_id)
+
+        from vendorside.serializers import VideoSerializer
+        serializer = VideoSerializer(videos, many=True)
+
+        return Response(serializer.data)
+    
