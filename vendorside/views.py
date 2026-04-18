@@ -194,6 +194,18 @@ class VendorDeleteCourseView(DestroyAPIView):
         return Course.objects.filter(vendor=self.request.user)
 
 
+# recent course list for dashboard
+class RecentVideosView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        videos = Video.objects.filter(
+            course__vendor=request.user
+        ).order_by('-id')[:5]   # latest 5 videos
+
+        serializer = VideoSerializer(videos, many=True)
+        return Response(serializer.data)
+
 # --------------------view video---------------------
 class VideoDetailView(RetrieveAPIView):
     queryset = Video.objects.all()

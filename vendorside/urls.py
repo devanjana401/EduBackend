@@ -28,6 +28,8 @@ urlpatterns = [
     path('course-update/<int:pk>/', VendorUpdateCourseView.as_view()),
     path('course-delete/<int:pk>/', VendorDeleteCourseView.as_view()),
 
+    path('recent-videos/', RecentVideosView.as_view()),
+
     path('video/<int:pk>/', VideoDetailView.as_view()),
     path('video-update/<int:pk>/', UpdateVideoView.as_view()),
     path('video-delete/<int:pk>/', DeleteVideoView.as_view()),
