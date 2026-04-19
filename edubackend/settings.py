@@ -156,5 +156,5 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
 EMAIL_HOST_USER = 'anjanasasi400@gmail.com'
-EMAIL_HOST_PASSWORD = 'REMOVED'   # gooogle given 16 password
+EMAIL_HOST_PASSWORD = '****************'   # gooogle given 16 password
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
