@@ -11,9 +11,17 @@ from accounts.models import CustomUser, VendorRequest, Vendor
 from accounts.serializers import UserSerializer, VendorSerializer,VendorRequestSerializer
 from vendorside.serializers import CategorySerializer
 
+# for password mail generate
+from django.core.mail import send_mail
+from django.conf import settings
+import random
+import string
 
 # Create your views here.
 
+# password generate 
+def generate_password():
+    return ''.join(random.choices(string.ascii_letters + string.digits, k=8))
 
 # approve vendor request(admin only)
 class ApproveVendorRequestAPI(APIView):
@@ -22,32 +30,44 @@ class ApproveVendorRequestAPI(APIView):
 
     def post(self, request, pk):
 
-        # # allow only admin
-        # if request.user.role != 1:
-        #     return Response({"error": "Permission denied"}, status=403)
-
         try:
             vendor_request = VendorRequest.objects.get(id=pk)
         except VendorRequest.DoesNotExist:
             return Response({"error": "Request not found"}, status=404)
 
-        # check already approved
+        # already approved check
         if vendor_request.status == 'approved':
             return Response({"message": "Already approved"})
 
-        # change status
+        # update status
         vendor_request.status = 'approved'
         vendor_request.save()
 
-        # create user account if not exists
-        user = None
-
+        # create user
         if not CustomUser.objects.filter(email=vendor_request.email).exists():
+
+            password = generate_password()
+
             user = CustomUser.objects.create_user(
                 email=vendor_request.email,
-                password="1234",
+                password=password,
                 role=2
             )
+
+            # send email here
+            try:
+                send_mail(
+                    "Test Mail",
+                    "Email working or not",
+                    settings.EMAIL_HOST_USER,
+                    ["yourgmail@gmail.com"],  # put your email
+                    fail_silently=False,
+                )
+                print("✅ Email sent")
+
+            except Exception as e:
+                print("❌ Email error:", e)
+
         else:
             user = CustomUser.objects.get(email=vendor_request.email)
 
@@ -64,7 +84,7 @@ class ApproveVendorRequestAPI(APIView):
         )
 
         return Response({
-            "message": "Vendor approved and account created"
+            "message": "Vendor approved, account created & email sent"
         })
     
 
@@ -206,6 +226,7 @@ class VendorRequestUpdateAPI(APIView):
 
         old_status = vendor_request.status
         serializer = VendorRequestSerializer(vendor_request, data=request.data, partial=True)
+    
 
         if serializer.is_valid():
             serializer.save()
@@ -224,8 +245,12 @@ class VendorRequestUpdateAPI(APIView):
                 if not Vendor.objects.filter(user__email=vendor_request.email).exists():
                     user, created = CustomUser.objects.get_or_create(
                         email=vendor_request.email,
-                        defaults={"role": 2, "password": "1234"}
-                    )
+                        defaults={"role": 2}
+                        )
+                    if created:
+                        password = generate_password()  
+                        user.set_password(password)
+                        user.save()
                     Vendor.objects.create(
                         user=user,
                         full_name=vendor_request.full_name,
@@ -236,6 +261,38 @@ class VendorRequestUpdateAPI(APIView):
                         certificate=vendor_request.certificate,
                         id_proof=vendor_request.id_proof
                     )
+                    try:
+                        send_mail(
+                            subject="🎉 Your Vendor Account Has Been Approved",
+                            message=f"""
+                                Hello {vendor_request.full_name},
+
+                                We are pleased to inform you that your vendor request has been successfully approved.
+
+                                You can now log in and start using your vendor dashboard.
+
+                                Login Details:
+                                Email: {vendor_request.email}
+                                {f"Password: {password}" if password else ""}
+
+                                For security reasons, we strongly recommend that you change your password after your first login.
+
+                                If you have any questions or need assistance, feel free to contact our support team.
+
+                                Welcome aboard!
+
+                                Best regards,  
+                                Team EduPlatform
+                                """,
+                            from_email=settings.EMAIL_HOST_USER,
+                            recipient_list=[vendor_request.email],
+                            fail_silently=False,
+                        )
+
+                        print("✅ Approval email sent")
+
+                    except Exception as e:
+                        print("❌ Email error:", e)
 
             return Response(serializer.data)
 
