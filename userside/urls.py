@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import BuyCourseView, MyCoursesView, CourseVideosView
+from .views import BuyCourseView, MyCoursesView, CourseVideosView,PreviewVideosView
 from vendorside.views import PublicCoursesView  
 
 urlpatterns = [
@@ -8,4 +8,6 @@ urlpatterns = [
     path("buy/<int:course_id>/", BuyCourseView.as_view()),
     path("my-courses/", MyCoursesView.as_view()),
     path("videos/<int:course_id>/", CourseVideosView.as_view()),
+
+    path('preview-videos/<int:course_id>/', PreviewVideosView.as_view()),
 ]

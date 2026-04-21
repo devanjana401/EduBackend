@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from vendorside.models import Course, Video
 from .models import Purchase
+from .serializers import PreviewVideoSerializer
 
 # Create your views here.
 
@@ -49,3 +50,12 @@ class CourseVideosView(APIView):
 
         return Response(serializer.data)
     
+
+# api for previe of videos befor buying
+class PreviewVideosView(APIView):
+
+    def get(self, request, course_id):
+        videos = Video.objects.filter(course_id=course_id)
+
+        serializer = PreviewVideoSerializer(videos, many=True)
+        return Response(serializer.data)
