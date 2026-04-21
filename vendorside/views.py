@@ -303,30 +303,3 @@ class VendorProfileUpdateAPI(APIView):
         except Vendor.DoesNotExist:
             return Response({"error": "Vendor profile not found"}, status=404)
         
-
-
-class VendorDashboardCountsAPI(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request):
-
-        try:
-            vendor = Vendor.objects.get(user=request.user)
-        except Vendor.DoesNotExist:
-            return Response({"error": "Vendor not found"}, status=404)
-
-        # courses by vendor
-        courses = Course.objects.filter(vendor=vendor)
-
-        # students who purchased vendor courses
-        student_count = Purchase.objects.filter(
-            course__vendor=vendor,
-            is_paid=True
-        ).values('user').distinct().count()
-
-        data = {
-            "courses": courses.count(),
-            "students": student_count,
-        }
-
-        return Response(data)

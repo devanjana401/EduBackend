@@ -44,6 +44,4 @@ urlpatterns = [
     path("profile/", VendorProfileAPI.as_view()),
     path("profile/update/", VendorProfileUpdateAPI.as_view()),
 
-    # dashboard chart
-    path("vendor/dashboard-counts/", VendorDashboardCountsAPI.as_view()),
 ]

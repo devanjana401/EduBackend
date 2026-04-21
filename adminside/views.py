@@ -15,7 +15,6 @@ from userside.models import Purchase
 
 from vendorside.models import Category, Course
 
-from django.contrib.auth import get_user_model
 
 # for password mail generate
 from django.core.mail import send_mail
@@ -353,17 +352,3 @@ class AdminPurchasesView(APIView):
         return Response(data)
     
 
-User = get_user_model()
-class AdminDashboardCountsAPI(APIView):
-    permission_classes = [IsAuthenticated, IsAdminUser]
-
-    def get(self, request):
-
-        data = {
-            "users": User.objects.filter(is_staff=False).count(),
-            "vendors": Vendor.objects.count(),
-            "categories": Category.objects.count(),
-            "courses": Course.objects.count(),
-        }
-
-        return Response(data)

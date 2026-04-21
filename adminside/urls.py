@@ -40,6 +40,4 @@ urlpatterns = [
     # purchased users
     path("admin/purchases/", AdminPurchasesView.as_view()),
 
-    # dashboard chart
-    path("admin/dashboard-counts/", AdminDashboardCountsAPI.as_view()),
 ]
