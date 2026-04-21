@@ -8,6 +8,10 @@ from rest_framework import status
 from .models import Category, Course, Video
 from .serializers import CategorySerializer, CourseSerializer, VideoSerializer
 
+from accounts.models import Vendor
+from accounts.serializers import VendorSerializer
+
+from userside.models import Purchase
 
 # ----------- vendor side ---------------
 
@@ -237,3 +241,92 @@ class PublicCoursesView(APIView):
         )
         serializer = CourseSerializer(courses, many=True)
         return Response(serializer.data)
+    
+
+# api to see users who purchased the course
+class VendorPurchasesView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        purchases = Purchase.objects.filter(
+            course__vendor=request.user,
+            is_paid=True
+        ).select_related('user', 'course')
+
+        data = []
+        for p in purchases:
+            data.append({
+                "user": p.user.email,
+                "course": p.course.coursename,
+                "date": p.purchased_at
+            })
+
+        return Response(data)
+    
+
+# api for editing self profile of vendor
+class VendorProfileAPI(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+
+        vendor, created = Vendor.objects.get_or_create(
+            user=request.user,
+            defaults={
+                "full_name": request.user.email,
+                "phone": "",
+            }
+        )
+
+        serializer = VendorSerializer(vendor, context={"request": request})
+        return Response(serializer.data)
+
+
+class VendorProfileUpdateAPI(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request):
+        try:
+            vendor = request.user.vendor_profile
+            serializer = VendorSerializer(
+                vendor,
+                data=request.data,
+                partial=True
+            )
+
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+
+            return Response(serializer.errors, status=400)
+
+        except Vendor.DoesNotExist:
+            return Response({"error": "Vendor profile not found"}, status=404)
+        
+
+
+class VendorDashboardCountsAPI(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+
+        try:
+            vendor = Vendor.objects.get(user=request.user)
+        except Vendor.DoesNotExist:
+            return Response({"error": "Vendor not found"}, status=404)
+
+        # courses by vendor
+        courses = Course.objects.filter(vendor=vendor)
+
+        # students who purchased vendor courses
+        student_count = Purchase.objects.filter(
+            course__vendor=vendor,
+            is_paid=True
+        ).values('user').distinct().count()
+
+        data = {
+            "courses": courses.count(),
+            "students": student_count,
+        }
+
+        return Response(data)

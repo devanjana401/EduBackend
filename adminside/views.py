@@ -3,13 +3,19 @@ from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated,IsAdminUser
 from rest_framework.parsers import MultiPartParser, FormParser
 
 # import models and serializers from account app
 from accounts.models import CustomUser, VendorRequest, Vendor
 from accounts.serializers import UserSerializer, VendorSerializer,VendorRequestSerializer
 from vendorside.serializers import CategorySerializer
+
+from userside.models import Purchase
+
+from vendorside.models import Category, Course
+
+from django.contrib.auth import get_user_model
 
 # for password mail generate
 from django.core.mail import send_mail
@@ -326,3 +332,38 @@ class CreateCategoryView(APIView):
             return Response(serializer.data)
 
         return Response(serializer.errors)
+    
+
+# api for see the users who purchased the course
+class AdminPurchasesView(APIView):
+    permission_classes = [IsAuthenticated, IsAdminUser]
+
+    def get(self, request):
+        purchases = Purchase.objects.filter(is_paid=True).select_related('user', 'course')
+
+        data = []
+        for p in purchases:
+            data.append({
+                "user": p.user.email,
+                "course": p.course.coursename,
+                "vendor": p.course.vendor.email,
+                "date": p.purchased_at
+            })
+
+        return Response(data)
+    
+
+User = get_user_model()
+class AdminDashboardCountsAPI(APIView):
+    permission_classes = [IsAuthenticated, IsAdminUser]
+
+    def get(self, request):
+
+        data = {
+            "users": User.objects.filter(is_staff=False).count(),
+            "vendors": Vendor.objects.count(),
+            "categories": Category.objects.count(),
+            "courses": Course.objects.count(),
+        }
+
+        return Response(data)

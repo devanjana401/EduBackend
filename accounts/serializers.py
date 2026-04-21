@@ -34,7 +34,8 @@ class UserSerializer(serializers.ModelSerializer):
 
 class VendorSerializer(serializers.ModelSerializer):
 
-    email = serializers.CharField(source="user.email")
+    email = serializers.EmailField(source="user.email", read_only=True)
+
     certificate_url = serializers.SerializerMethodField()
     id_proof_url = serializers.SerializerMethodField()
 
@@ -54,17 +55,13 @@ class VendorSerializer(serializers.ModelSerializer):
         ]
 
     def get_certificate_url(self, obj):
+        request = self.context.get('request')
         if obj.certificate:
-            request = self.context.get('request')
-            if request:
-                return request.build_absolute_uri(obj.certificate.url)
-            return obj.certificate.url
+            return request.build_absolute_uri(obj.certificate.url) if request else obj.certificate.url
         return None
 
     def get_id_proof_url(self, obj):
+        request = self.context.get('request')
         if obj.id_proof:
-            request = self.context.get('request')
-            if request:
-                return request.build_absolute_uri(obj.id_proof.url)
-            return obj.id_proof.url
+            return request.build_absolute_uri(obj.id_proof.url) if request else obj.id_proof.url
         return None

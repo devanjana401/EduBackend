@@ -36,4 +36,14 @@ urlpatterns = [
 
     # public
     path("public-courses/", PublicCoursesView.as_view()),
+
+    # purchased users
+    path("vendor/purchases/", VendorPurchasesView.as_view()),
+
+    # for self profile editing of vendor
+    path("profile/", VendorProfileAPI.as_view()),
+    path("profile/update/", VendorProfileUpdateAPI.as_view()),
+
+    # dashboard chart
+    path("vendor/dashboard-counts/", VendorDashboardCountsAPI.as_view()),
 ]

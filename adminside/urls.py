@@ -12,6 +12,8 @@ from .views import (
     VendorRequestUpdateAPI,
     VendorRequestDeleteAPI,
     CreateCategoryView,
+    AdminPurchasesView,
+    AdminDashboardCountsAPI,
 )
 
 urlpatterns = [
@@ -34,4 +36,10 @@ urlpatterns = [
 
     # category
     path("create-category/", CreateCategoryView.as_view()),
+
+    # purchased users
+    path("admin/purchases/", AdminPurchasesView.as_view()),
+
+    # dashboard chart
+    path("admin/dashboard-counts/", AdminDashboardCountsAPI.as_view()),
 ]
