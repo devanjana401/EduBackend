@@ -13,7 +13,7 @@ from .views import (
     VendorRequestDeleteAPI,
     CreateCategoryView,
     AdminPurchasesView,
-    AdminDashboardCountsAPI,
+    AdminDashboardCountsAPI
 )
 
 urlpatterns = [
@@ -40,4 +40,6 @@ urlpatterns = [
     # purchased users
     path("admin/purchases/", AdminPurchasesView.as_view()),
 
+    # chart
+    path("admin/dashboard-counts/", AdminDashboardCountsAPI.as_view()),
 ]

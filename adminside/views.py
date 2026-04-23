@@ -352,3 +352,20 @@ class AdminPurchasesView(APIView):
         return Response(data)
     
 
+
+from django.contrib.auth import get_user_model
+User = get_user_model()
+
+class AdminDashboardCountsAPI(APIView):
+    permission_classes = [IsAuthenticated, IsAdminUser]
+
+    def get(self, request):
+        data = {
+            "users": CustomUser.objects.filter(is_staff=False).count(),
+            "vendors": Vendor.objects.count(),
+            "categories": Category.objects.count(),
+            "courses": Course.objects.count(),
+            "purchased_users": Purchase.objects.filter(is_paid=True).count(),
+        }
+
+        return Response(data)
