@@ -158,3 +158,7 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'anjanasasi400@gmail.com'
 EMAIL_HOST_PASSWORD = '****************'   # gooogle given 16 password
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+
+# RAZORPAY_KEY_ID = "rzp_test_ShnvbYHVzmRo3l"
+# RAZORPAY_KEY_SECRET = "BjPDzJKmBlyPDkZlu3Z3PFKT"

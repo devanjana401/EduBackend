@@ -6,6 +6,7 @@ from vendorside.models import Course, Video
 from .models import Purchase
 from .serializers import PreviewVideoSerializer
 
+
 # Create your views here.
 
 class BuyCourseView(APIView):
@@ -20,6 +21,7 @@ class BuyCourseView(APIView):
         Purchase.objects.create(user=user, course_id=course_id, is_paid=True)
 
         return Response({"message": "Course purchased successfully"})
+    
     
 class MyCoursesView(APIView):
     permission_classes = [IsAuthenticated]
@@ -51,7 +53,7 @@ class CourseVideosView(APIView):
         return Response(serializer.data)
     
 
-# api for previe of videos befor buying
+# api for preview of videos befor buying
 class PreviewVideosView(APIView):
 
     def get(self, request, course_id):
@@ -59,3 +61,65 @@ class PreviewVideosView(APIView):
 
         serializer = PreviewVideoSerializer(videos, many=True)
         return Response(serializer.data)
+    
+
+
+# razorpay integration
+# import razorpay
+# from django.conf import settings
+
+# class BuyCourseView(APIView):
+#     permission_classes = [IsAuthenticated]
+
+#     def post(self, request, course_id):
+#         user = request.user
+
+#         if Purchase.objects.filter(user=user, course_id=course_id).exists():
+#             return Response({"message": "Already purchased"})
+
+#         course = Course.objects.get(id=course_id)
+
+#         client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+
+#         order = client.order.create({
+#             "amount": int(course.price * 100),
+#             "currency": "INR",
+#             "payment_capture": "1"
+#         })
+
+#         return Response({
+#             "order_id": order["id"],
+#             "amount": order["amount"],
+#             "key": settings.RAZORPAY_KEY_ID
+#         })
+
+
+
+# class VerifyPaymentView(APIView):
+#     permission_classes = [IsAuthenticated]
+
+#     def post(self, request, course_id):
+
+#         client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+
+#         data = {
+#             "razorpay_order_id": request.data.get("razorpay_order_id"),
+#             "razorpay_payment_id": request.data.get("razorpay_payment_id"),
+#             "razorpay_signature": request.data.get("razorpay_signature"),
+#         }
+
+#         try:
+#             client.utility.verify_payment_signature(data)
+
+#             Purchase.objects.create(
+#                 user=request.user,
+#                 course_id=course_id,
+#                 is_paid=True,
+#                 razorpay_order_id=data["razorpay_order_id"],
+#                 razorpay_payment_id=data["razorpay_payment_id"]
+#             )
+
+#             return Response({"message": "Payment successful"})
+
+#         except:
+#             return Response({"error": "Payment failed"}, status=400)
