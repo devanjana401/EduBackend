@@ -316,6 +316,8 @@ class VendorDashboardCountsAPI(APIView):
 
             courses = Course.objects.filter(vendor=vendor.user)
 
+            videos = Video.objects.filter(course__vendor=vendor.user).count()
+
             purchases = Purchase.objects.filter(
                 course__vendor=vendor.user,
                 is_paid=True
@@ -325,9 +327,10 @@ class VendorDashboardCountsAPI(APIView):
 
             data = {
                 "courses": courses.count(),
+                "videos": videos,
                 "students": student_count,
                 "purchases": purchases.count(),
-                "earnings": purchases.count() * 500,  # adjust later
+                "earnings": sum(float(p.course.price) * 0.8 for p in purchases)
             }
 
             return Response(data)
