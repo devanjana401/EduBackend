@@ -45,6 +45,9 @@ INSTALLED_APPS = [
     'adminside',
     'vendorside',
     'userside',
+
+    'channels',
+    'chat',
 ]
 
 
@@ -163,3 +166,12 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 # RAZORPAY_KEY_ID = os.getenv('RAZORPAY_KEY_ID')
 # RAZORPAY_KEY_SECRET = os.getenv('RAZORPAY_KEY_SECRET')
+
+
+ASGI_APPLICATION = 'edbackend.asgi.application'
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer",
+    },
+}
