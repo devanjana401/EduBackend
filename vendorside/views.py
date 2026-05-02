@@ -256,6 +256,8 @@ class VendorPurchasesView(APIView):
         data = []
         for p in purchases:
             data.append({
+                "user_id": p.user.id,    
+                "course_id": p.course.id,                
                 "user": p.user.email,
                 "course": p.course.coursename,
                 "date": p.purchased_at

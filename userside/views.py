@@ -7,6 +7,10 @@ from .models import Purchase
 from .serializers import PreviewVideoSerializer
 
 
+from rest_framework.decorators import api_view, permission_classes
+from .models import ChatMessage
+from .serializers import ChatMessageSerializer
+
 # Create your views here.
 
 class BuyCourseView(APIView):
@@ -62,6 +66,28 @@ class PreviewVideosView(APIView):
         serializer = PreviewVideoSerializer(videos, many=True)
         return Response(serializer.data)
     
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def chat_history(request, courseId, userId):
+    """
+    Fetches all previous messages for a specific course and student.
+    """
+    try:
+        # filter by course and the student's ID (userId)
+        # then sort by timestamp so they appear in order (oldest to newest)
+        messages = ChatMessage.objects.filter(
+            course_id=courseId, 
+            user_id=userId
+        ).order_by('timestamp')
+        
+        serializer = ChatMessageSerializer(messages, many=True)
+        return Response(serializer.data)
+    except Exception as e:
+        return Response({"error": str(e)}, status=500)
+
+
 
 
 # razorpay integration

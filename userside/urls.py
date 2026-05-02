@@ -2,6 +2,8 @@ from django.urls import path
 from .views import BuyCourseView, MyCoursesView, CourseVideosView,PreviewVideosView
 from vendorside.views import PublicCoursesView  
 
+from . import views
+
 urlpatterns = [
     path("public-courses/", PublicCoursesView.as_view()), 
 
@@ -11,4 +13,6 @@ urlpatterns = [
     path("videos/<int:course_id>/", CourseVideosView.as_view()),
 
     path('preview-videos/<int:course_id>/', PreviewVideosView.as_view()),
+
+    path('chat/history/<int:courseId>/<int:userId>/', views.chat_history, name='chat_history'),
 ]

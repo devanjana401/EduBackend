@@ -30,6 +30,10 @@ ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
 
 
 INSTALLED_APPS = [
+    'daphne',
+    'channels',
+    'chat',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -46,8 +50,6 @@ INSTALLED_APPS = [
     'vendorside',
     'userside',
 
-    'channels',
-    'chat',
 ]
 
 
@@ -168,7 +170,7 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 # RAZORPAY_KEY_SECRET = os.getenv('RAZORPAY_KEY_SECRET')
 
 
-ASGI_APPLICATION = 'edbackend.asgi.application'
+ASGI_APPLICATION = 'edubackend.asgi.application'
 
 CHANNEL_LAYERS = {
     "default": {
