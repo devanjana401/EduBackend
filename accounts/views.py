@@ -12,7 +12,6 @@ from .serializers import VendorRequestSerializer,UserSerializer,VendorSerializer
 
 
 
-
 # function to generate JWT tokens
 def get_tokens_for_user(user):
     refresh = RefreshToken.for_user(user)
