@@ -26,8 +26,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 
 DEBUG = os.getenv('DEBUG') == 'True'
 
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
-
+ALLOWED_HOSTS = ['16.16.184.146', '127.0.0.1', 'localhost']
 
 INSTALLED_APPS = [
     'daphne',
@@ -113,6 +112,7 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
 
 
 AUTH_PASSWORD_VALIDATORS = [
