@@ -31,14 +31,16 @@ SECURE_SSL_REDIRECT = True
 
 # Trust your new subdomain for CSRF
 CSRF_TRUSTED_ORIGINS = ['https://educonnectapi.anjanasasi.online']
-
+CORS_ALLOWED_ORIGINS = [
+    "https://educonnect.anjanasasi.online",
+]
 DEBUG = os.getenv('DEBUG') == 'True'
 
 ALLOWED_HOSTS = [
     'educonnectapi.anjanasasi.online',
     '16.16.184.146',
     'localhost',
-    '127.0.0.1'
+    '127.0.0.1',
 ]
 INSTALLED_APPS = [
     'daphne',
