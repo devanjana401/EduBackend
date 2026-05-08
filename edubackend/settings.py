@@ -26,8 +26,12 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 
 DEBUG = os.getenv('DEBUG') == 'True'
 
-ALLOWED_HOSTS = ['16.16.184.146', '127.0.0.1', 'localhost']
-
+ALLOWED_HOSTS = [
+    'educonnectapi.anjanasasi.online',
+    '16.16.184.146',
+    'localhost',
+    '127.0.0.1'
+]
 INSTALLED_APPS = [
     'daphne',
     'channels',
