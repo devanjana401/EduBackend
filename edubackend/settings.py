@@ -23,6 +23,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # security
 SECRET_KEY = os.getenv('SECRET_KEY')
+# Tell Django it's behind a secure proxy
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# Force all links to use https in the app
+SECURE_SSL_REDIRECT = True
+
+# Trust your new subdomain for CSRF
+CSRF_TRUSTED_ORIGINS = ['https://educonnectapi.anjanasasi.online']
 
 DEBUG = os.getenv('DEBUG') == 'True'
 
