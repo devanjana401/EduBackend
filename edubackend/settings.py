@@ -34,7 +34,9 @@ CSRF_TRUSTED_ORIGINS = ['https://educonnectapi.anjanasasi.online']
 CORS_ALLOWED_ORIGINS = [
     "https://educonnect.anjanasasi.online",
 ]
-DEBUG = os.getenv('DEBUG') == 'True'
+DEBUG = os.getenv('DEBUG') == 'False'
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 ALLOWED_HOSTS = [
     'educonnectapi.anjanasasi.online',
