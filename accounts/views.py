@@ -130,3 +130,48 @@ class ResetPasswordAPI(APIView):
         except CustomUser.DoesNotExist:
             return Response({"error": "User not found"}, status=404)
 
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from .models import PasswordResetOTP, CustomUser
+from django.core.mail import send_mail
+import random
+class RequestOTPAPI(APIView):
+    def post(self, request):
+        email = request.data.get("email")
+        if not CustomUser.objects.filter(email=email).exists():
+            return Response({"error": "User with this email does not exist"}, status=404)
+
+        # Generate 6-digit OTP
+        otp = str(random.randint(100000, 999999))
+        PasswordResetOTP.objects.filter(email=email).delete() # Clear old OTPs
+        PasswordResetOTP.objects.create(email=email, otp=otp)
+
+        # Send Email (Configure your settings.py for this to work)
+        send_mail(
+            "Your Password Reset OTP",
+            f"Your OTP for password reset is: {otp}",
+            "noreply@yourapp.com",
+            [email],
+        )
+        return Response({"message": "OTP sent to your email"})
+
+class ResetPasswordVerifyAPI(APIView):
+    def post(self, request):
+        email = request.data.get("email")
+        otp = request.data.get("otp")
+        new_password = request.data.get("new_password")
+
+        try:
+            otp_record = PasswordResetOTP.objects.get(email=email, otp=otp)
+            if not otp_record.is_valid():
+                return Response({"error": "OTP has expired"}, status=400)
+            
+            user = CustomUser.objects.get(email=email)
+            user.set_password(new_password)
+            user.save()
+            
+            otp_record.delete() # Clean up
+            return Response({"message": "Password reset successfully"})
+        except PasswordResetOTP.DoesNotExist:
+            return Response({"error": "Invalid OTP"}, status=400)
