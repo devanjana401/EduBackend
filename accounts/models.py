@@ -111,5 +111,5 @@ class PasswordResetOTP(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def is_valid(self):
-        # OTP is valid for 5 minutes
+        # otp is valid for 5 minutes
         return self.created_at >= timezone.now() - timedelta(minutes=5)

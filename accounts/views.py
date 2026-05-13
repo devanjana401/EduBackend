@@ -142,12 +142,12 @@ class RequestOTPAPI(APIView):
         if not CustomUser.objects.filter(email=email).exists():
             return Response({"error": "User with this email does not exist"}, status=404)
 
-        # Generate 6-digit OTP
+        # generate 6-digit otp
         otp = str(random.randint(100000, 999999))
         PasswordResetOTP.objects.filter(email=email).delete() # Clear old OTPs
         PasswordResetOTP.objects.create(email=email, otp=otp)
 
-        # Send Email (Configure your settings.py for this to work)
+        # send email 
         send_mail(
             "Your Password Reset OTP",
             f"Your OTP for password reset is: {otp}",
@@ -171,7 +171,7 @@ class ResetPasswordVerifyAPI(APIView):
             user.set_password(new_password)
             user.save()
             
-            otp_record.delete() # Clean up
+            otp_record.delete() 
             return Response({"message": "Password reset successfully"})
         except PasswordResetOTP.DoesNotExist:
             return Response({"error": "Invalid OTP"}, status=400)
