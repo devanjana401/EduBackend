@@ -69,6 +69,7 @@ class LoginAPI(APIView):
         return Response({
             "message": "Login successful",
             "email": user.email,
+             "user_id": user.id,
             "role": user.role,
             "access": tokens["access"],
             "refresh": tokens["refresh"]
